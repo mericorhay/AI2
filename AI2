@@ -1,0 +1,45 @@
+# -*- coding: utf-8 -*-
+
+Original file is located at
+    https://colab.research.google.com/drive/1vdrZAmersBMZeksgmR8vZl0hwr_9r-e3
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+from keras.datasets import mnist
+from keras.models import Sequential
+from keras.layers import Dense, Flatten
+from keras.utils import to_categorical
+
+(x_egitim,y_egitim),(x_test,y_test) = mnist.load_data()
+
+print("Eğitim veri Kümesi",x_egitim.shape)
+print("Test veri Kümesi",x_test.shape)
+
+plt.figure(figsize=(10,10))
+for i in range(25):
+  plt.subplot(5,5,i+1)
+  plt.imshow(x_egitim[i],cmap="gray")
+  plt.title(str(y_egitim[i]))
+  plt.axis("off")
+
+x_egitim = x_egitim/255
+x_test=x_test/255
+
+y_egitim=to_categorical(y_egitim)
+y_test=to_categorical(y_test)
+
+model = Sequential()
+model.add(Flatten(input_shape=(28,28)))
+model.add(Dense(128,activation="tanh"))
+model.add(Dense(10,activation="softmax"))
+
+model.compile(optimizer ="adam",loss="categorical_crossentropy",metrics=["accuracy"])
+
+model.fit(x_egitim,y_egitim,epochs=10,batch_size=32,validation_split=0.2)
+
+test_loss, test_accuracy = model.evaluate(x_test, y_test)
+print("Test doğruluğu:%", test_accuracy*100)
+
+
+
